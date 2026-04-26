@@ -5,16 +5,16 @@
       "method": "GET",
       "path": "/?action=rating",
       "expectedStatus": 200,
-      "expectedBody": [{"id": 1}],
-      "bodyMatcher": "partial"
+      "expectedBody": "[]",
+      "bodyMatcher": "contains"
     },
     {
       "name": "GET / — все анкеты",
       "method": "GET",
       "path": "/",
       "expectedStatus": 200,
-      "expectedBody": [{"id": 1}],
-      "bodyMatcher": "partial"
+      "expectedBody": "[]",
+      "bodyMatcher": "contains"
     },
     {
       "name": "POST / — подать анкету",

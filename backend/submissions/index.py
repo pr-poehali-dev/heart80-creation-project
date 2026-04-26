@@ -10,7 +10,7 @@ import os
 import psycopg2
 
 SCHEMA = "t_p93967550_heart80_creation_pro"
-ADMIN_PASSWORD = "heart80admin"
+ADMIN_PASSWORD = "lovesongkaiangell"
 
 CORS = {
     "Access-Control-Allow-Origin": "*",
@@ -56,7 +56,7 @@ def get_rating():
     cur.execute(
         f"SELECT id, artist, release_link, tg_link, score_text, score_quality, "
         f"score_charisma, score_structure, score_vibe, score_hit, total, submitted_at "
-        f"FROM {SCHEMA}.submissions WHERE rated = TRUE ORDER BY total DESC"
+        f"FROM {SCHEMA}.submissions WHERE rated = TRUE AND hidden = FALSE ORDER BY total DESC"
     )
     rows = cur.fetchall()
     conn.close()
@@ -81,7 +81,7 @@ def get_all():
     cur.execute(
         f"SELECT id, artist, release_link, tg_link, description, rated, "
         f"score_text, score_quality, score_charisma, score_structure, score_vibe, score_hit, total, submitted_at "
-        f"FROM {SCHEMA}.submissions ORDER BY submitted_at DESC"
+        f"FROM {SCHEMA}.submissions WHERE hidden = FALSE ORDER BY submitted_at DESC"
     )
     rows = cur.fetchall()
     conn.close()

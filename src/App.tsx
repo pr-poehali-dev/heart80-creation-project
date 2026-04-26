@@ -33,7 +33,7 @@ const CRITERIA = [
   { key: "hit", label: "Хитовость", max: 20, description: "Запоминаемость, потенциал, крючки" },
 ] as const;
 
-const ADMIN_PASSWORD = "heart80admin";
+const ADMIN_PASSWORD = "lovesongkaiangell";
 
 
 function PixelHeart({ size = 24 }: { size?: number }) {
@@ -127,7 +127,7 @@ function HomePage({ onChange }: { onChange: (s: Section) => void }) {
           <div className="flex items-center gap-4 mb-8">
             <PixelHeart size={48} />
             <div>
-              <p className="font-mono text-white/40 text-xs tracking-widest mb-2">★ РИС ЗА ТВОРЧЕСТВО ★</p>
+              <p className="font-mono text-white/40 text-xs tracking-widest mb-2">ТГК - @Heart80P</p>
               <h1 className="font-pixel text-3xl md:text-5xl text-white leading-tight">
                 HEART<span className="text-white/50">80</span>
               </h1>
@@ -720,20 +720,11 @@ function ContactsPage() {
                 <Icon name="Send" size={16} className="text-white" />
               </div>
               <div>
-                <p className="font-mono text-white/40 text-[10px] mb-1">TELEGRAM</p>
-                <p className="font-mono text-white text-sm">По всем вопросам — в личные сообщения</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="pixel-card">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 border-2 border-white/30 flex items-center justify-center shrink-0">
-                <Icon name="Music" size={16} className="text-white" />
-              </div>
-              <div>
-                <p className="font-mono text-white/40 text-[10px] mb-1">ПОДАЧА РАБОТ</p>
-                <p className="font-mono text-white text-sm">Через форму на сайте — раздел «Подать»</p>
+                <p className="font-mono text-white/40 text-[10px] mb-1">TELEGRAM КАНАЛ</p>
+                <a href="https://t.me/Heart80P" target="_blank" rel="noreferrer"
+                  className="font-mono text-white text-sm hover:text-white/70 transition-colors">
+                  @Heart80P
+                </a>
               </div>
             </div>
           </div>
@@ -745,7 +736,7 @@ function ContactsPage() {
               </div>
               <div>
                 <p className="font-mono text-white/40 text-[10px] mb-1">ПРОЕКТ</p>
-                <p className="font-mono text-white text-sm">Heart80 — рис за творчество</p>
+                <p className="font-mono text-white text-sm">ТГК - @Heart80P</p>
               </div>
             </div>
           </div>
