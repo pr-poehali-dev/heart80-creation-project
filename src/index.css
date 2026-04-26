@@ -4,98 +4,260 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 4%;
+    --foreground: 0 0% 95%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 0 0% 95%;
+    --primary-foreground: 0 0% 4%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 55%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 0 0% 20%;
+    --accent-foreground: 0 0% 95%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 95%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 0 0% 20%;
+    --input: 0 0% 15%;
+    --ring: 0 0% 80%;
 
-    --radius: 0.5rem;
+    --radius: 0rem;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --pixel-border: 2px solid hsl(0 0% 95%);
+    --pixel-shadow: 4px 4px 0px hsl(0 0% 95%);
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+    image-rendering: pixelated;
   }
 
   body {
     @apply bg-background text-foreground;
+    font-family: "IBM Plex Mono", monospace;
+    cursor: default;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: "Press Start 2P", cursive;
+    line-height: 1.6;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(0 0% 8%);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(0 0% 40%);
+    border: 2px solid hsl(0 0% 8%);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(0 0% 70%);
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    background: hsl(0 0% 20%);
+    border: 2px solid hsl(0 0% 95%);
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: hsl(0 0% 95%);
+    border: 2px solid hsl(0 0% 4%);
+    cursor: pointer;
+    box-shadow: 2px 2px 0px hsl(0 0% 4%);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: hsl(0 0% 95%);
+    border: 2px solid hsl(0 0% 4%);
+    cursor: pointer;
+    box-shadow: 2px 2px 0px hsl(0 0% 4%);
+  }
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 8px;
+  }
+}
+
+@layer utilities {
+  .pixel-border {
+    border: var(--pixel-border);
+  }
+
+  .pixel-shadow {
+    box-shadow: var(--pixel-shadow);
+  }
+
+  .pixel-btn {
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 700;
+    border: 2px solid hsl(0 0% 95%);
+    background: hsl(0 0% 4%);
+    color: hsl(0 0% 95%);
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.05s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .pixel-btn:hover {
+    background: hsl(0 0% 95%);
+    color: hsl(0 0% 4%);
+    box-shadow: 4px 4px 0px hsl(0 0% 60%);
+  }
+
+  .pixel-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px hsl(0 0% 60%);
+  }
+
+  .pixel-btn-white {
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 700;
+    border: 2px solid hsl(0 0% 95%);
+    background: hsl(0 0% 95%);
+    color: hsl(0 0% 4%);
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.05s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .pixel-btn-white:hover {
+    background: hsl(0 0% 4%);
+    color: hsl(0 0% 95%);
+    box-shadow: 4px 4px 0px hsl(0 0% 60%);
+  }
+
+  .pixel-input {
+    font-family: "IBM Plex Mono", monospace;
+    background: hsl(0 0% 8%);
+    border: 2px solid hsl(0 0% 40%);
+    color: hsl(0 0% 95%);
+    padding: 10px 14px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.1s;
+  }
+
+  .pixel-input:focus {
+    border-color: hsl(0 0% 95%);
+  }
+
+  .pixel-card {
+    background: hsl(0 0% 8%);
+    border: 2px solid hsl(0 0% 25%);
+    padding: 24px;
+  }
+
+  .scanlines {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scanlines::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(0, 0, 0, 0.08) 3px,
+      rgba(0, 0, 0, 0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(hsl(0 0% 15% / 0.3) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(0 0% 15% / 0.3) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  .blink {
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+
+  .pixel-heart {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: hsl(0 0% 95%);
+    clip-path: polygon(
+      50% 90%,
+      5% 45%,
+      5% 25%,
+      25% 5%,
+      50% 25%,
+      75% 5%,
+      95% 25%,
+      95% 45%
+    );
+  }
+
+  .fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
