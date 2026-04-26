@@ -746,8 +746,74 @@ function ContactsPage() {
   );
 }
 
+function AgreementModal({ onAccept }: { onAccept: () => void }) {
+  const [checked, setChecked] = useState(false);
+
+  return (
+    <div className="fixed inset-0 z-[100] bg-black flex items-center justify-center px-4">
+      <div className="grid-bg absolute inset-0 scanlines pointer-events-none" />
+      <div className="relative pixel-card border-white max-w-lg w-full fade-in">
+        <div className="flex items-center gap-3 mb-6">
+          <PixelHeart size={24} />
+          <h2 className="font-pixel text-[11px] text-white leading-relaxed">HEART80</h2>
+        </div>
+
+        <p className="font-pixel text-[9px] text-white/60 mb-5 leading-relaxed">ПРЕЖДЕ ЧЕМ ВОЙТИ</p>
+
+        <div className="space-y-3 mb-6">
+          {[
+            "Все поданные анкеты публично доступны — их видят все посетители сайта",
+            "Ник артиста, ссылки и описание отображаются в открытом рейтинге",
+            "Администрация не несёт ответственности за содержимое анкет",
+            "Подавая анкету, вы соглашаетесь на публикацию данных",
+          ].map((item, i) => (
+            <div key={i} className="flex gap-3">
+              <span className="font-pixel text-[8px] text-white/20 shrink-0 mt-[3px]">{String(i + 1).padStart(2, "0")}</span>
+              <p className="font-mono text-white/60 text-xs leading-relaxed">{item}</p>
+            </div>
+          ))}
+        </div>
+
+        <label className="flex items-start gap-3 cursor-pointer mb-6 group">
+          <div
+            onClick={() => setChecked(!checked)}
+            className={`w-5 h-5 border-2 shrink-0 mt-0.5 flex items-center justify-center transition-colors cursor-pointer ${
+              checked ? "border-white bg-white" : "border-white/40 bg-transparent group-hover:border-white/70"
+            }`}
+          >
+            {checked && <span className="font-pixel text-black text-[8px]">✓</span>}
+          </div>
+          <span className="font-mono text-sm text-white/70 leading-relaxed select-none">
+            Я понимаю, что мои данные будут публично доступны
+          </span>
+        </label>
+
+        <button
+          onClick={onAccept}
+          disabled={!checked}
+          className="pixel-btn-white w-full text-xs py-3 disabled:opacity-30 disabled:cursor-not-allowed"
+        >
+          ВОЙТИ НА САЙТ →
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [section, setSection] = useState<Section>("home");
+  const [agreed, setAgreed] = useState(() => {
+    return sessionStorage.getItem("heart80_agreed") === "true";
+  });
+
+  const handleAccept = () => {
+    sessionStorage.setItem("heart80_agreed", "true");
+    setAgreed(true);
+  };
+
+  if (!agreed) {
+    return <AgreementModal onAccept={handleAccept} />;
+  }
 
   return (
     <div className="min-h-screen bg-background">
