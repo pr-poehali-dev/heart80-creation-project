@@ -1,0 +1,34 @@
+{
+  "tests": [
+    {
+      "name": "GET /rating — публичный рейтинг",
+      "method": "GET",
+      "path": "/?action=rating",
+      "expectedStatus": 200,
+      "expectedBody": [{"id": 1}],
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "GET / — все анкеты",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": [{"id": 1}],
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "POST / — подать анкету",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "artist": "TEST_ARTIST",
+        "releaseLink": "https://music.yandex.ru/test",
+        "tgLink": "https://t.me/test",
+        "description": "Тестовая подача анкеты для проверки работы бэкенда."
+      },
+      "expectedStatus": 201,
+      "expectedBody": {"ok": true},
+      "bodyMatcher": "partial"
+    }
+  ]
+}

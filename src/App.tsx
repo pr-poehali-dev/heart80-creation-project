@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Icon from "@/components/ui/icon";
+
+const API = "https://functions.poehali.dev/60a20438-f8f7-491e-a464-80d2d397aaba";
 
 type Section = "home" | "submit" | "rating" | "admin" | "about" | "contacts";
 
@@ -33,39 +35,6 @@ const CRITERIA = [
 
 const ADMIN_PASSWORD = "heart80admin";
 
-const INITIAL_SUBMISSIONS: Submission[] = [
-  {
-    id: 1,
-    artist: "VELVET.EXE",
-    releaseLink: "https://music.yandex.ru/example1",
-    tgLink: "https://t.me/velvetexe",
-    description: "Трек о потере связи с реальностью в эпоху цифрового шума. Написан за одну ночь, продюсирование совместное.",
-    submittedAt: "2026-04-20",
-    scores: { text: 8, quality: 9, charisma: 8, structure: 9, vibe: 17, hit: 16 },
-    total: 67,
-    rated: true,
-  },
-  {
-    id: 2,
-    artist: "MRAK SOUND",
-    releaseLink: "https://music.yandex.ru/example2",
-    tgLink: "https://t.me/mraksound",
-    description: "Инструментальный эксперимент на стыке дрим-попа и нойза. Три месяца работы.",
-    submittedAt: "2026-04-22",
-    scores: { text: 6, quality: 8, charisma: 7, structure: 8, vibe: 14, hit: 12 },
-    total: 55,
-    rated: true,
-  },
-  {
-    id: 3,
-    artist: "SOLNCE_OFF",
-    releaseLink: "https://music.yandex.ru/example3",
-    tgLink: "https://t.me/solnceoff",
-    description: "Лирический альбом о городе и одиночестве. Записан на домашней студии.",
-    submittedAt: "2026-04-24",
-    rated: false,
-  },
-];
 
 function PixelHeart({ size = 24 }: { size?: number }) {
   return (
@@ -223,6 +192,7 @@ function HomePage({ onChange }: { onChange: (s: Section) => void }) {
 function SubmitPage() {
   const [form, setForm] = useState({ artist: "", releaseLink: "", tgLink: "", description: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const wordCount = form.description.trim() ? form.description.trim().split(/\s+/).length : 0;
@@ -237,11 +207,28 @@ function SubmitPage() {
     return e;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
-    setSubmitted(true);
+    setLoading(true);
+    try {
+      const res = await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        const data = await res.json();
+        setErrors({ artist: data.error || "Ошибка при отправке" });
+      }
+    } catch {
+      setErrors({ artist: "Ошибка сети, попробуйте снова" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (submitted) {
@@ -332,8 +319,8 @@ function SubmitPage() {
             {errors.description && <p className="font-mono text-red-400 text-[11px] mt-1">{errors.description}</p>}
           </div>
 
-          <button type="submit" className="pixel-btn-white w-full text-sm py-3">
-            ОТПРАВИТЬ АНКЕТУ →
+          <button type="submit" disabled={loading} className="pixel-btn-white w-full text-sm py-3 disabled:opacity-50">
+            {loading ? "ОТПРАВЛЯЮ..." : "ОТПРАВИТЬ АНКЕТУ →"}
           </button>
         </form>
       </div>
@@ -342,8 +329,15 @@ function SubmitPage() {
 }
 
 function RatingPage() {
-  const rated = INITIAL_SUBMISSIONS.filter(s => s.rated && s.total !== undefined)
-    .sort((a, b) => (b.total ?? 0) - (a.total ?? 0));
+  const [rated, setRated] = useState<Submission[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${API}?action=rating`)
+      .then(r => r.json())
+      .then(data => setRated(Array.isArray(data) ? data : []))
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <div className="min-h-screen grid-bg px-4 py-16">
@@ -353,75 +347,67 @@ function RatingPage() {
           <h2 className="font-pixel text-lg text-white">РЕЙТИНГ</h2>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="border-b-2 border-white/20">
-                <th className="font-mono text-[10px] text-white/40 text-left py-3 px-3 tracking-wider w-12">#</th>
-                <th className="font-mono text-[10px] text-white/40 text-left py-3 px-3 tracking-wider">АРТИСТ</th>
-                <th className="font-mono text-[10px] text-white/40 text-left py-3 px-3 tracking-wider hidden md:table-cell">ТЕКСТ</th>
-                <th className="font-mono text-[10px] text-white/40 text-left py-3 px-3 tracking-wider hidden md:table-cell">КАЧЕСТВО</th>
-                <th className="font-mono text-[10px] text-white/40 text-left py-3 px-3 tracking-wider hidden md:table-cell">ХАРИЗМА</th>
-                <th className="font-mono text-[10px] text-white/40 text-left py-3 px-3 tracking-wider hidden md:table-cell">СТРУКТУРА</th>
-                <th className="font-mono text-[10px] text-white/40 text-left py-3 px-3 tracking-wider hidden md:table-cell">ВАЙБ</th>
-                <th className="font-mono text-[10px] text-white/40 text-left py-3 px-3 tracking-wider hidden md:table-cell">ХИТ</th>
-                <th className="font-mono text-[10px] text-white/40 text-right py-3 px-3 tracking-wider">ИТОГО</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rated.map((s, i) => (
-                <tr key={s.id} className="border-b border-white/10 hover:bg-white/5 transition-colors">
-                  <td className="font-pixel text-[10px] py-4 px-3 text-white/30">{String(i + 1).padStart(2, "0")}</td>
-                  <td className="py-4 px-3">
-                    <p className="font-mono font-bold text-white text-sm">{s.artist}</p>
-                    <a
-                      href={s.releaseLink}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="font-mono text-[10px] text-white/30 hover:text-white/70 transition-colors"
-                    >
-                      → слушать
-                    </a>
-                  </td>
-                  {s.scores && (
-                    <>
-                      <td className="font-mono text-sm text-white/70 py-4 px-3 hidden md:table-cell">
-                        {s.scores.text}<span className="text-white/20">/10</span>
-                      </td>
-                      <td className="font-mono text-sm text-white/70 py-4 px-3 hidden md:table-cell">
-                        {s.scores.quality}<span className="text-white/20">/10</span>
-                      </td>
-                      <td className="font-mono text-sm text-white/70 py-4 px-3 hidden md:table-cell">
-                        {s.scores.charisma}<span className="text-white/20">/10</span>
-                      </td>
-                      <td className="font-mono text-sm text-white/70 py-4 px-3 hidden md:table-cell">
-                        {s.scores.structure}<span className="text-white/20">/10</span>
-                      </td>
-                      <td className="font-mono text-sm text-white/70 py-4 px-3 hidden md:table-cell">
-                        {s.scores.vibe}<span className="text-white/20">/20</span>
-                      </td>
-                      <td className="font-mono text-sm text-white/70 py-4 px-3 hidden md:table-cell">
-                        {s.scores.hit}<span className="text-white/20">/20</span>
-                      </td>
-                    </>
-                  )}
-                  <td className="py-4 px-3 text-right">
-                    <span className="font-pixel text-sm text-white">{s.total}</span>
-                    <span className="font-mono text-white/30 text-xs">/80</span>
-                    <div className="mt-1 flex justify-end">
-                      <ScoreBar score={s.total ?? 0} max={80} />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {rated.length === 0 && (
+        {loading ? (
           <div className="text-center py-20">
-            <p className="font-mono text-white/30">Оценённых работ пока нет</p>
+            <div className="w-2 h-2 bg-white blink inline-block mr-2" />
+            <span className="font-mono text-white/30 text-sm">ЗАГРУЖАЮ...</span>
           </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b-2 border-white/20">
+                    <th className="font-mono text-[10px] text-white/40 text-left py-3 px-3 tracking-wider w-12">#</th>
+                    <th className="font-mono text-[10px] text-white/40 text-left py-3 px-3 tracking-wider">АРТИСТ</th>
+                    <th className="font-mono text-[10px] text-white/40 text-left py-3 px-3 tracking-wider hidden md:table-cell">ТЕКСТ</th>
+                    <th className="font-mono text-[10px] text-white/40 text-left py-3 px-3 tracking-wider hidden md:table-cell">КАЧЕСТВО</th>
+                    <th className="font-mono text-[10px] text-white/40 text-left py-3 px-3 tracking-wider hidden md:table-cell">ХАРИЗМА</th>
+                    <th className="font-mono text-[10px] text-white/40 text-left py-3 px-3 tracking-wider hidden md:table-cell">СТРУКТУРА</th>
+                    <th className="font-mono text-[10px] text-white/40 text-left py-3 px-3 tracking-wider hidden md:table-cell">ВАЙБ</th>
+                    <th className="font-mono text-[10px] text-white/40 text-left py-3 px-3 tracking-wider hidden md:table-cell">ХИТ</th>
+                    <th className="font-mono text-[10px] text-white/40 text-right py-3 px-3 tracking-wider">ИТОГО</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rated.map((s, i) => (
+                    <tr key={s.id} className="border-b border-white/10 hover:bg-white/5 transition-colors">
+                      <td className="font-pixel text-[10px] py-4 px-3 text-white/30">{String(i + 1).padStart(2, "0")}</td>
+                      <td className="py-4 px-3">
+                        <p className="font-mono font-bold text-white text-sm">{s.artist}</p>
+                        <a href={s.releaseLink} target="_blank" rel="noreferrer"
+                          className="font-mono text-[10px] text-white/30 hover:text-white/70 transition-colors">
+                          → слушать
+                        </a>
+                      </td>
+                      {s.scores && (
+                        <>
+                          <td className="font-mono text-sm text-white/70 py-4 px-3 hidden md:table-cell">{s.scores.text}<span className="text-white/20">/10</span></td>
+                          <td className="font-mono text-sm text-white/70 py-4 px-3 hidden md:table-cell">{s.scores.quality}<span className="text-white/20">/10</span></td>
+                          <td className="font-mono text-sm text-white/70 py-4 px-3 hidden md:table-cell">{s.scores.charisma}<span className="text-white/20">/10</span></td>
+                          <td className="font-mono text-sm text-white/70 py-4 px-3 hidden md:table-cell">{s.scores.structure}<span className="text-white/20">/10</span></td>
+                          <td className="font-mono text-sm text-white/70 py-4 px-3 hidden md:table-cell">{s.scores.vibe}<span className="text-white/20">/20</span></td>
+                          <td className="font-mono text-sm text-white/70 py-4 px-3 hidden md:table-cell">{s.scores.hit}<span className="text-white/20">/20</span></td>
+                        </>
+                      )}
+                      <td className="py-4 px-3 text-right">
+                        <span className="font-pixel text-sm text-white">{s.total}</span>
+                        <span className="font-mono text-white/30 text-xs">/80</span>
+                        <div className="mt-1 flex justify-end">
+                          <ScoreBar score={s.total ?? 0} max={80} />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {rated.length === 0 && (
+              <div className="text-center py-20">
+                <p className="font-mono text-white/30">Оценённых работ пока нет</p>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
@@ -432,14 +418,34 @@ function AdminPage() {
   const [auth, setAuth] = useState(false);
   const [pw, setPw] = useState("");
   const [pwErr, setPwErr] = useState(false);
-  const [submissions, setSubmissions] = useState<Submission[]>(INITIAL_SUBMISSIONS);
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [loadingList, setLoadingList] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [editing, setEditing] = useState<number | null>(null);
   const [scores, setScores] = useState<Record<string, number>>({});
 
-  const handleLogin = (e: React.FormEvent) => {
+  const loadSubmissions = useCallback(async (password: string) => {
+    setLoadingList(true);
+    try {
+      const res = await fetch(API, {
+        headers: { "X-Admin-Password": password },
+      });
+      const data = await res.json();
+      setSubmissions(Array.isArray(data) ? data : []);
+    } finally {
+      setLoadingList(false);
+    }
+  }, []);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pw === ADMIN_PASSWORD) { setAuth(true); setPwErr(false); }
-    else { setPwErr(true); }
+    if (pw === ADMIN_PASSWORD) {
+      setAuth(true);
+      setPwErr(false);
+      loadSubmissions(pw);
+    } else {
+      setPwErr(true);
+    }
   };
 
   const startEdit = (s: Submission) => {
@@ -451,18 +457,24 @@ function AdminPage() {
     );
   };
 
-  const saveScores = (id: number) => {
-    const total =
-      (scores.text || 0) + (scores.quality || 0) + (scores.charisma || 0) +
-      (scores.structure || 0) + (scores.vibe || 0) + (scores.hit || 0);
-    setSubmissions(prev =>
-      prev.map(s =>
-        s.id === id
-          ? { ...s, scores: scores as Submission["scores"], total, rated: true }
-          : s
-      )
-    );
-    setEditing(null);
+  const saveScores = async (id: number) => {
+    setSaving(true);
+    try {
+      const res = await fetch(`${API}?id=${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Admin-Password": ADMIN_PASSWORD,
+        },
+        body: JSON.stringify({ scores }),
+      });
+      if (res.ok) {
+        setEditing(null);
+        loadSubmissions(ADMIN_PASSWORD);
+      }
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (!auth) {
@@ -501,9 +513,9 @@ function AdminPage() {
             <h2 className="font-pixel text-lg text-white">АНКЕТЫ</h2>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-white blink" />
+            <div className={`w-2 h-2 bg-white ${loadingList ? "blink" : ""}`} />
             <span className="font-mono text-[11px] text-white/50">
-              {submissions.filter(s => s.rated).length}/{submissions.length} оценено
+              {loadingList ? "ЗАГРУЖАЮ..." : `${submissions.filter(s => s.rated).length}/${submissions.length} оценено`}
             </span>
           </div>
         </div>
@@ -605,8 +617,8 @@ function AdminPage() {
                       <button onClick={() => setEditing(null)} className="pixel-btn text-xs py-2 px-3">
                         ОТМЕНА
                       </button>
-                      <button onClick={() => saveScores(s.id)} className="pixel-btn-white text-xs py-2 px-3">
-                        СОХРАНИТЬ →
+                      <button onClick={() => saveScores(s.id)} disabled={saving} className="pixel-btn-white text-xs py-2 px-3 disabled:opacity-50">
+                        {saving ? "СОХРАНЯЮ..." : "СОХРАНИТЬ →"}
                       </button>
                     </div>
                   </div>
